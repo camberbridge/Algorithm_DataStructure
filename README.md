@@ -1,2 +1,2 @@
-Algorithm_DataStructure
+アルゴリズム・データ構造
 =======================
