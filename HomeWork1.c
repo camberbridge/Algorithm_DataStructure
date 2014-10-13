@@ -63,7 +63,6 @@ int charac(char c){
 }
 
 void polish(char str[], char r_polish[]){
-  char c;
   int i = 0, j = 0;
   for(i = 0; i < strlen(str); i++){
     if(charac(str[i]) == 1){  /*変数だったらそのまま出力*/
@@ -78,20 +77,26 @@ void polish(char str[], char r_polish[]){
         }
         push(&str[i]);  /*スタックに積む*/
         continue;
-      }else if((str[i] == '*') || str[i] == '/'){  /*'*', '/'だったら*/
+      }else if((str[i] == '*') || (str[i] == '/')){  /*'*', '/'だったら*/
         push(&str[i]);  /*スタックに積む*/
         continue;
+      }else if(str[i] == '('){  /*'('だったらpush*/
+        push(&str[i]);
+        continue;
+      }else if(str[i] == ')'){  /*')'だったらスタックの先頭が'('になるまでpop. そして'('は出力しない*/
+        while(1){
+          if(STACK[StkCtr - 1] == '('){
+            char parentheses[BUFLEN];
+            pop(&parentheses[j]);
+            ++j;
+            break;
+          }else if(STACK[StkCtr - 1] != '('){
+            pop(&r_polish[x]);
+            ++x;
+          }
+        }
+        continue;
       }
-    }else if(str[i] == '('){  /*'('だったらpush*/
-      push(&str[i]);
-      continue;
-    }else if(str[i] == ')'){  /*')'だったらスタックの先頭が'('になるまでpop. そして'('は出力しない*/
-      while(STACK[StkCtr] != '('){
-        pop(&r_polish[x]);
-        ++x;
-      }
-      --StkCtr;
-      continue;
     }else if(charac(str[i]) == 0){  /*入力が終了したらスタックの先頭から順にpop*/
       while(StkCtr != 0){
         pop(&r_polish[x]);
