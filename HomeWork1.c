@@ -126,26 +126,11 @@ void code(char R_polish[]){
   char tmp[BUFLEN];
   int opecount = 0, transcount = 0;
   int i = 0, j = 0;
-//  char buf[BUFLEN], *s = "T";
   for(i = 0; i < x; i++){
    if((charac(R_polish[i])) == 2){
       opecount++;
    }
   }
- 
-//  char t[opecount] = {};
-//  for(i = 0; i < opecount; i++){
-//    char t[i] = ;
-//  }
-
-//  for(i = 0; i < x; i++){
-//    if((charac(R_polish[i])) == 2){
-//      opecount++;
-//      sprintf(buf, "%d", i);
-//      strcat(s, buf);
-//      char t[i]= s;
-//    }
-//  }
 
   printf("opecount = %d\n\n", opecount);
   
@@ -161,44 +146,22 @@ void code(char R_polish[]){
         printf("見事\n");
       }
       if(transcount >= 2){
- /*       if(((charac(STACK[StkCtr])) == 0) && ((charac(STACK[StkCtr - 1])) == 0)){
+        if(((charac(STACK[StkCtr - 1])) != 0) && ((charac(STACK[StkCtr - 2])) != 0)){
+          printf("T%s <- %s %s %s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+        }else if(((charac(STACK[StkCtr - 1])) == 0) && ((charac(STACK[StkCtr - 2])) == 0)){
           printf("T%s <- T%s %s T%s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-        }else if(((charac(STACK[StkCtr])) == 2) && ((charac(STACK[StkCtr - 1])) == 2)){
-          printf("T%s <- %s %s %s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-        }else if((charac(STACK[StkCtr])) == 0 ){
-          printf("T%s <- %s %s T%s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-        }else if((charac(STACK[StkCtr - 1])) == 0 ){
-          printf("T%s <- T%s %s %s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-        }
-*/
-      
-        if(((charac(STACK[StkCtr])) != 0) && ((charac(STACK[StkCtr - 1])) != 0)){
-          printf("T%s <- %s %s %s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-        }
-        if((charac(STACK[StkCtr])) == 0){
-          if((charac(STACK[StkCtr - 1])) == 0){
-            printf("T%s <- T%s %s T%s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-          }
-          printf("T%s <- %s %s T%s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
         }else if((charac(STACK[StkCtr - 1])) == 0){
-          if((charac(STACK[StkCtr])) == 0){
-            printf("T%s <- T%s %s T%s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
-          }
+          printf("T%s <- %s %s T%s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+        }else if((charac(STACK[StkCtr - 2])) == 0){
           printf("T%s <- T%s %s %s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
         }
-
       }
 
-
       printf("STACK = %s\n\n", STACK);
-
 
       pop(&trashlist[j]);
       pop(&trashlist[j]);
       j = j  + 2;
-
-      //char t_char[10];
-      //sprintf(t_char, "%d", tmp);
 
       push(tmp);
       printf("tmpSTACK = %s\n", &STACK);
