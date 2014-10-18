@@ -102,12 +102,12 @@ void polish(char str[], char r_polish[], char R_polish[], int *len){
       }
     }else if(charac(str[i]) == 0){  /*入力が終了したらスタックの先頭から順にpop*/
       printf("1: r_polish = %s, STACK = %s, StkCtr = %d\n", r_polish, STACK, StkCtr);
-      printf("length=%d\n\n", strlen(r_polish));
+      printf("length=%lu\n\n", strlen(r_polish));
       while(StkCtr != 0){
         pop(&r_polish[x]);
         ++x;
 printf("2: r_polish = %s, STACK = %s, StkCtr = %d\n", r_polish, STACK, StkCtr);
-printf("length=%d\n\n", strlen(r_polish));
+printf("length=%lu\n\n", strlen(r_polish));
       }
       break;
     }
@@ -142,18 +142,18 @@ void code(char R_polish[]){
       transcount++;
       sprintf(tmp, "%d", transcount);
       if(transcount == 1){
-        printf("T%s <- %s %s %s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+        printf("T%s <- %c %c %c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         printf("見事\n");
       }
       if(transcount >= 2){
         if(((charac(STACK[StkCtr - 1])) != 0) && ((charac(STACK[StkCtr - 2])) != 0)){
-          printf("T%s <- %s %s %s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+          printf("T%s <- %c %c %c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }else if(((charac(STACK[StkCtr - 1])) == 0) && ((charac(STACK[StkCtr - 2])) == 0)){
-          printf("T%s <- T%s %s T%s\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+          printf("T%s <- T%c %c T%c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }else if((charac(STACK[StkCtr - 1])) == 0){
-          printf("T%s <- %s %s T%s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+          printf("T%s <- %c %c T%c\n\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }else if((charac(STACK[StkCtr - 2])) == 0){
-          printf("T%s <- T%s %s %s\n\n", tmp, &STACK[StkCtr - 2], &R_polish[i], &STACK[StkCtr - 1]);
+          printf("T%s <- T%c %c %c\n\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }
       }
 
@@ -164,7 +164,7 @@ void code(char R_polish[]){
       j = j  + 2;
 
       push(tmp);
-      printf("tmpSTACK = %s\n", &STACK);
+      printf("tmpSTACK = %s\n", STACK);
       if(transcount == opecount){
         break;
       }
