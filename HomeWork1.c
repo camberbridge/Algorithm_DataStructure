@@ -16,7 +16,7 @@ void code(char R_polish[]);  /*中間コードへの変換*/
 int main(void){
   char str[BUFLEN];  /*コマンドラインからの入力の格納用*/
   char r_polish[BUFLEN];  /*逆ポーランド記法コードの格納用*/
-  char R_polish[BUFLEN];  /*逆ポーランド記法コードの格納用*/
+  char R_polish[BUFLEN];  /*逆ポーランド記法コードの格納用(解)*/
   int len; /*逆ポーランド文字列の長さを格納*/
 
   fgets(str, BUFLEN, stdin);  /*コマンドライン引数を制限80文字でstr[]に格納*/
@@ -67,20 +67,23 @@ int charac(char c){
 void polish(char str[], char r_polish[], char R_polish[], int *len){
   int i = 0, j = 0;
   for(i = 0; i < strlen(str); i++){
-    printf("STACK = %s, r_polish = %s\n", STACK, r_polish);
     if(charac(str[i]) == 1){  /*変数だったらそのまま出力*/
       r_polish[x] = str[i];
       ++x;
       continue;
     }else if(charac(str[i]) == 2){  /*演算子だったら以下の条件分岐にかける*/
       if((str[i] == '+') || (str[i] == '-')){  /*'+', '-'だったら*/
-        while((STACK[StkCtr - 1] == '*') || (STACK[StkCtr - 1] == '/')){  /*スタックの先頭が'*', '/'だったらスタックの先頭をpop*/
+        while((STACK[StkCtr - 1] == '*') || (STACK[StkCtr - 1] == '/') || (STACK[StkCtr - 1] == '+') || (STACK[StkCtr - 1] == '-')){  /*スタックの先頭が'*', '/', '+', '-'だったらスタックの先頭をpop*/
           pop(&r_polish[x]);
           ++x;
         }
         push(&str[i]);  /*スタックに積む*/
         continue;
       }else if((str[i] == '*') || (str[i] == '/')){  /*'*', '/'だったら*/
+        while((STACK[StkCtr - 1] == '*') || (STACK[StkCtr - 1] == '/')){  /*スタックの先頭が'*', '/'だったらスタックの先頭をpop*/
+          pop(&r_polish[x]);
+          ++x;
+        }
         push(&str[i]);  /*スタックに積む*/
         continue;
       }else if(str[i] == '('){  /*'('だったらpush*/
@@ -92,7 +95,7 @@ void polish(char str[], char r_polish[], char R_polish[], int *len){
             char parentheses[BUFLEN]; /*左括弧格納用*/
             pop(&parentheses[j]);
             ++j;
-            break;
+            break;  /*左括弧を検出したらループ脱出*/
           }else if(STACK[StkCtr - 1] != '('){
             pop(&r_polish[x]);
             ++x;
@@ -101,22 +104,19 @@ void polish(char str[], char r_polish[], char R_polish[], int *len){
         continue;
       }
     }else if(charac(str[i]) == 0){  /*入力が終了したらスタックの先頭から順にpop*/
-      printf("1: r_polish = %s, STACK = %s, StkCtr = %d\n", r_polish, STACK, StkCtr);
-      printf("length=%lu\n\n", strlen(r_polish));
       while(StkCtr != 0){
         pop(&r_polish[x]);
         ++x;
-printf("2: r_polish = %s, STACK = %s, StkCtr = %d\n", r_polish, STACK, StkCtr);
-printf("length=%lu\n\n", strlen(r_polish));
       }
       break;
     }
   }
-  *len = x;
-  printf("------------%d, %d\n", x, *len);
-/*コンパイラによっては算術表現を変換にかけると全処理終了後の逆ポーランド文字列の末尾に化けた文字が余計に追加される場合が時々あるので、それを切り離す。*/
+  
+  *len = x;  /*r_polishの文字列長更新*/
+
+  /*コンパイラによっては算術表現を変換にかけると全処理終了後の逆ポーランド文字列の末尾に化けた文字が余計に追加される場合が時々あるので、それを切り離す。*/
   for(i = 0; i < x; i++){
-    R_polish[i] = r_polish[i];
+    R_polish[i] = r_polish[i]; /*逆ポーランド文字列の解はR_polishへ*/
   }
 }
 
@@ -126,24 +126,21 @@ void code(char R_polish[]){
   char tmp[BUFLEN];
   int opecount = 0, transcount = 0;
   int i = 0, j = 0;
-  for(i = 0; i < x; i++){
+
+  for(i = 0; i < x; i++){  /*逆ポーランド文字列には演算子がいくつあるか*/
    if((charac(R_polish[i])) == 2){
       opecount++;
    }
   }
-
-  printf("opecount = %d\n\n", opecount);
   
   for(i = 0; i < x; i++){
-    if((charac(R_polish[i])) == 1){
+    if((charac(R_polish[i])) == 1){  /*変数ならスタックに積む*/
       push(&R_polish[i]);
-      printf("STACK = %s\n", STACK);
-    }else if((charac(R_polish[i])) == 2){
+    }else if((charac(R_polish[i])) == 2){  /*演算子なら以下の条件分岐にかける*/
       transcount++;
-      sprintf(tmp, "%d", transcount);
+      sprintf(tmp, "%d", transcount);  /*int -> char 変換*/
       if(transcount == 1){
         printf("T%s <- %c %c %c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
-        printf("見事\n");
       }
       if(transcount >= 2){
         if(((charac(STACK[StkCtr - 1])) != 0) && ((charac(STACK[StkCtr - 2])) != 0)){
@@ -151,20 +148,20 @@ void code(char R_polish[]){
         }else if(((charac(STACK[StkCtr - 1])) == 0) && ((charac(STACK[StkCtr - 2])) == 0)){
           printf("T%s <- T%c %c T%c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }else if((charac(STACK[StkCtr - 1])) == 0){
-          printf("T%s <- %c %c T%c\n\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
+          printf("T%s <- %c %c T%c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }else if((charac(STACK[StkCtr - 2])) == 0){
-          printf("T%s <- T%c %c %c\n\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
+          printf("T%s <- T%c %c %c\n", tmp, STACK[StkCtr - 2], R_polish[i], STACK[StkCtr - 1]);
         }
       }
 
-      printf("STACK = %s\n\n", STACK);
-
+      /*スタックの先頭から2つの要素をゴミ箱へ*/
       pop(&trashlist[j]);
       pop(&trashlist[j]);
       j = j  + 2;
 
-      push(tmp);
-      printf("tmpSTACK = %s\n", STACK);
+      push(tmp);  /*T? をスタックに積む*/
+
+      /*演算子の数だけ処理を行ったら中間コード処理終了*/
       if(transcount == opecount){
         break;
       }
